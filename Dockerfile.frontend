@@ -1,0 +1,13 @@
+# Use an official Vue.js image as a base
+FROM node:14 as build-stage
+WORKDIR /app
+COPY frontend/package*.json ./
+RUN yarn
+COPY frontend/ .
+RUN yarn serve
+
+# Production-ready image
+FROM nginx:1.21
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
